@@ -1,4 +1,4 @@
 int a = 1;
-
-keshav = (3);
+int keshav; 
+float keshav;
 

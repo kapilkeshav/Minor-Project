@@ -3,10 +3,12 @@
 #include<stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "symbol.c"
+
+extern FILE *yyin;
 
 int lineno = 1; // initialize to 1
-
-void ret_print(char *token_type);
+void finpr(char *token_type);
 void yyerror();
 %}
 
@@ -22,52 +24,53 @@ WS      (\'\\[nftrbv]\')
 STR      ["].*["]
 
 %%
-"char"          { ret_print("K_CHAR"); }
-"int"            { ret_print("K_INT"); }
-"float"        { ret_print("K_FLOAT"); }
-"double"      { ret_print("K_DOUBLE"); }
-"if"              { ret_print("K_IF"); }
-"else"          { ret_print("K_ELSE"); }
-"while"	       { ret_print("K_WHILE"); }
-"for"	       { ret_print("K_FOR"); }
-"continue"  { ret_print("K_CONTINUE"); }
-"break"	       { ret_print("K_BREAK"); }
-"void"	       { ret_print("K_VOID"); }
-"return"     { ret_print("K_RETURN"); }
+"char"          { finpr("K_CHAR"); }
+"int"            { finpr("K_INT"); }
+"float"        { finpr("K_FLOAT"); }
+"double"      { finpr("K_DOUBLE"); }
+"if"              { finpr("K_IF"); }
+"else"          { finpr("K_ELSE"); }
+"while"	       { finpr("K_WHILE"); }
+"for"	       { finpr("K_FOR"); }
+"continue"  { finpr("K_CONTINUE"); }
+"break"	       { finpr("K_BREAK"); }
+"void"	       { finpr("K_VOID"); }
+"return"     { finpr("K_RETURN"); }
 
-"+"|"-"      { ret_print("ADDOP"); }
-"*"	     { ret_print("MULOP"); }
-"/"	     { ret_print("DIVOP"); }
-"++"|"--"    { ret_print("INCR"); }
-"||"         { ret_print("OROP"); }
-"&&"	     { ret_print("ANDOP"); }
-"!"	     { ret_print("NOTOP"); }
-"=="|"!="    { ret_print("EQUOP"); }
-">"|"<"|">="|"<="      { ret_print("RELOP"); }
+"+"|"-"      { finpr("ADDOP"); }
+"*"	     { finpr("MULOP"); }
+"/"	     { finpr("DIVOP"); }
+"++"|"--"    { finpr("INCR"); }
+"||"         { finpr("OROP"); }
+"&&"	     { finpr("ANDOP"); }
+"!"	     { finpr("NOTOP"); }
+"=="|"!="    { finpr("EQUOP"); }
+">"|"<"|">="|"<="      { finpr("RELOP"); }
 
-{ID}         { ret_print("ID"); }
-{INT}     { ret_print("INT"); }
-{FLOAT}     { ret_print("FLOAT"); }
-{WS}     { ret_print("WS"); }
-{STR}     { ret_print("STRING"); }
+{ID}         { insert(yytext,strlen(yytext),UNDEF,lineno);
+               finpr("ID"); }
+{INT}     { finpr("INT"); }
+{FLOAT}     { finpr("FLOAT"); }
+{WS}     { finpr("WS"); }
+{STR}     { finpr("STRING"); }
 
-"("      { ret_print("LPAREN"); }
-")"      { ret_print("RPAREN"); }
-"]"      { ret_print("LBRACK"); }
-"["      { ret_print("RBRACK"); }
-"{"      { ret_print("LBRACE"); }
-"}"      { ret_print("RBRACE"); }
-";"      { ret_print("SEMI"); }
-"."      { ret_print("DOT"); }
-","      { ret_print("COMMA"); }
-"="      { ret_print("ASSIGN"); }
-"&"      { ret_print("REFER"); }
+"("      { finpr("LPAREN"); }
+")"      { finpr("RPAREN"); }
+"]"      { finpr("LBRACK"); }
+"["      { finpr("RBRACK"); }
+"{"      { finpr("LBRACE"); }
+"}"      { finpr("RBRACE"); }
+";"      { finpr("SEMI"); }
+"."      { finpr("DOT"); }
+","      { finpr("COMMA"); }
+"="      { finpr("ASSIGN"); }
+"&"      { finpr("REFER"); }
 "\n"		   { lineno += 1; }
 [ \t\r\f]+	   /* eat up whitespace */
 .		   { yyerror("Unrecognized character"); }
 
 %%
-void ret_print(char *token_type){
+void finpr(char *token_type){
    printf("yytext: %s\ttoken: %s\tlineno: %d\n", yytext, token_type, lineno);
 }
 
@@ -77,6 +80,7 @@ void yyerror(char *message){
 }
 
 int main(int argc, char *argv[]){
+   init_hash_table();
     yyin = fopen(argv[1], "r");
     yylex();
     fclose(yyin);

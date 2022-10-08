@@ -512,13 +512,15 @@ char *yytext;
 #include<stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "symbol.c"
+
+extern FILE *yyin;
 
 int lineno = 1; // initialize to 1
-
-void ret_print(char *token_type);
+void finpr(char *token_type);
 void yyerror();
-#line 520 "lex.yy.c"
-#line 521 "lex.yy.c"
+#line 522 "lex.yy.c"
+#line 523 "lex.yy.c"
 
 #define INITIAL 0
 
@@ -735,9 +737,9 @@ YY_DECL
 		}
 
 	{
-#line 24 "lexer.flex"
+#line 26 "lexer.flex"
 
-#line 740 "lex.yy.c"
+#line 742 "lex.yy.c"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -796,211 +798,212 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 25 "lexer.flex"
-{ ret_print("K_CHAR"); }
+#line 27 "lexer.flex"
+{ finpr("K_CHAR"); }
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 26 "lexer.flex"
-{ ret_print("K_INT"); }
+#line 28 "lexer.flex"
+{ finpr("K_INT"); }
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 27 "lexer.flex"
-{ ret_print("K_FLOAT"); }
+#line 29 "lexer.flex"
+{ finpr("K_FLOAT"); }
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 28 "lexer.flex"
-{ ret_print("K_DOUBLE"); }
+#line 30 "lexer.flex"
+{ finpr("K_DOUBLE"); }
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 29 "lexer.flex"
-{ ret_print("K_IF"); }
+#line 31 "lexer.flex"
+{ finpr("K_IF"); }
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 30 "lexer.flex"
-{ ret_print("K_ELSE"); }
+#line 32 "lexer.flex"
+{ finpr("K_ELSE"); }
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 31 "lexer.flex"
-{ ret_print("K_WHILE"); }
+#line 33 "lexer.flex"
+{ finpr("K_WHILE"); }
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 32 "lexer.flex"
-{ ret_print("K_FOR"); }
+#line 34 "lexer.flex"
+{ finpr("K_FOR"); }
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 33 "lexer.flex"
-{ ret_print("K_CONTINUE"); }
+#line 35 "lexer.flex"
+{ finpr("K_CONTINUE"); }
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 34 "lexer.flex"
-{ ret_print("K_BREAK"); }
+#line 36 "lexer.flex"
+{ finpr("K_BREAK"); }
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 35 "lexer.flex"
-{ ret_print("K_VOID"); }
+#line 37 "lexer.flex"
+{ finpr("K_VOID"); }
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 36 "lexer.flex"
-{ ret_print("K_RETURN"); }
+#line 38 "lexer.flex"
+{ finpr("K_RETURN"); }
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 38 "lexer.flex"
-{ ret_print("ADDOP"); }
+#line 40 "lexer.flex"
+{ finpr("ADDOP"); }
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 39 "lexer.flex"
-{ ret_print("MULOP"); }
+#line 41 "lexer.flex"
+{ finpr("MULOP"); }
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 40 "lexer.flex"
-{ ret_print("DIVOP"); }
+#line 42 "lexer.flex"
+{ finpr("DIVOP"); }
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 41 "lexer.flex"
-{ ret_print("INCR"); }
+#line 43 "lexer.flex"
+{ finpr("INCR"); }
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 42 "lexer.flex"
-{ ret_print("OROP"); }
+#line 44 "lexer.flex"
+{ finpr("OROP"); }
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 43 "lexer.flex"
-{ ret_print("ANDOP"); }
+#line 45 "lexer.flex"
+{ finpr("ANDOP"); }
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 44 "lexer.flex"
-{ ret_print("NOTOP"); }
+#line 46 "lexer.flex"
+{ finpr("NOTOP"); }
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 45 "lexer.flex"
-{ ret_print("EQUOP"); }
+#line 47 "lexer.flex"
+{ finpr("EQUOP"); }
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 46 "lexer.flex"
-{ ret_print("RELOP"); }
+#line 48 "lexer.flex"
+{ finpr("RELOP"); }
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 48 "lexer.flex"
-{ ret_print("ID"); }
+#line 50 "lexer.flex"
+{ insert(yytext,strlen(yytext),UNDEF,lineno);
+               finpr("ID"); }
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 49 "lexer.flex"
-{ ret_print("INT"); }
+#line 52 "lexer.flex"
+{ finpr("INT"); }
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 50 "lexer.flex"
-{ ret_print("FLOAT"); }
+#line 53 "lexer.flex"
+{ finpr("FLOAT"); }
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 51 "lexer.flex"
-{ ret_print("WS"); }
+#line 54 "lexer.flex"
+{ finpr("WS"); }
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 52 "lexer.flex"
-{ ret_print("STRING"); }
+#line 55 "lexer.flex"
+{ finpr("STRING"); }
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 54 "lexer.flex"
-{ ret_print("LPAREN"); }
+#line 57 "lexer.flex"
+{ finpr("LPAREN"); }
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 55 "lexer.flex"
-{ ret_print("RPAREN"); }
+#line 58 "lexer.flex"
+{ finpr("RPAREN"); }
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 56 "lexer.flex"
-{ ret_print("LBRACK"); }
+#line 59 "lexer.flex"
+{ finpr("LBRACK"); }
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 57 "lexer.flex"
-{ ret_print("RBRACK"); }
+#line 60 "lexer.flex"
+{ finpr("RBRACK"); }
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 58 "lexer.flex"
-{ ret_print("LBRACE"); }
+#line 61 "lexer.flex"
+{ finpr("LBRACE"); }
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 59 "lexer.flex"
-{ ret_print("RBRACE"); }
+#line 62 "lexer.flex"
+{ finpr("RBRACE"); }
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 60 "lexer.flex"
-{ ret_print("SEMI"); }
+#line 63 "lexer.flex"
+{ finpr("SEMI"); }
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
-#line 61 "lexer.flex"
-{ ret_print("DOT"); }
+#line 64 "lexer.flex"
+{ finpr("DOT"); }
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
-#line 62 "lexer.flex"
-{ ret_print("COMMA"); }
+#line 65 "lexer.flex"
+{ finpr("COMMA"); }
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
-#line 63 "lexer.flex"
-{ ret_print("ASSIGN"); }
+#line 66 "lexer.flex"
+{ finpr("ASSIGN"); }
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
-#line 64 "lexer.flex"
-{ ret_print("REFER"); }
+#line 67 "lexer.flex"
+{ finpr("REFER"); }
 	YY_BREAK
 case 38:
 /* rule 38 can match eol */
 YY_RULE_SETUP
-#line 65 "lexer.flex"
+#line 68 "lexer.flex"
 { lineno += 1; }
 	YY_BREAK
 case 39:
 YY_RULE_SETUP
-#line 66 "lexer.flex"
+#line 69 "lexer.flex"
 /* eat up whitespace */
 	YY_BREAK
 case 40:
 YY_RULE_SETUP
-#line 67 "lexer.flex"
+#line 70 "lexer.flex"
 { yyerror("Unrecognized character"); }
 	YY_BREAK
 case 41:
 YY_RULE_SETUP
-#line 69 "lexer.flex"
+#line 72 "lexer.flex"
 ECHO;
 	YY_BREAK
-#line 1003 "lex.yy.c"
+#line 1006 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -2005,9 +2008,9 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 69 "lexer.flex"
+#line 72 "lexer.flex"
 
-void ret_print(char *token_type){
+void finpr(char *token_type){
    printf("yytext: %s\ttoken: %s\tlineno: %d\n", yytext, token_type, lineno);
 }
 
@@ -2017,6 +2020,7 @@ void yyerror(char *message){
 }
 
 int main(int argc, char *argv[]){
+   init_hash_table();
     yyin = fopen(argv[1], "r");
     yylex();
     fclose(yyin);
