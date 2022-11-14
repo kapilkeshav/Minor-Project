@@ -2,54 +2,54 @@
 #define SIZE 211
 
 /* maximum size of tokens-identifiers */
-#define MAXTOKENLEN 40
+#define MAXTL 40
 
 /* token types */
 #define UNDEF 0
-#define INT_T 1
-#define REAL_T 2
-#define STR_T 3
-#define LOGIC_T 4
-#define ARRAY_T 5
-#define FUNCTION_T 6
+#define I_TYPE 1 //int
+#define R_TYPE 2 //real
+#define S_TYPE 3 //string
+#define L_TYPE 4 //logic
+#define A_TYPE 5 //array
+#define F_TYPE 6 //function
 
 /* how parameter is passed */
 #define BY_VALUE 1
 #define BY_REFER 2
 
 /* parameter struct */
-typedef struct Param{
+typedef struct param{
 	int p_type;
-	char p_name[MAXTOKENLEN];
+	char p_name[MAXTL];
 	// to store value
 	int ival; double fval; char *st_sval;
 	int passing; // value or reference
-}Param;
+}param;
 
 /* a linked list of references (lineno's) for each variable */
 typedef struct varref{ 
     int lineno;
-    struct RefList *next;
+    struct varref *next;
     int type;
 }varref;
 
 // struct that represents a list node
 typedef struct tokens{
-	char t_name[MAXTOKENLEN];
+	char t_name[MAXTL];
     int t_size;
     int t_scope;
     varref *lines;
 	// to store value and sometimes more information
-	int st_ival; double st_fval; char *st_sval;
+	int t_ival; double t_fval; char *t_sval;
 	// type
     int t_type;
-	int t_ifo; // for arrays (info type) and functions (return type)
+	int inf_type; // for arrays (info type) and functions (return type)
 	// array stuff
 	int *i_vals; double *f_vals; char **s_vals;
-	int arr_size;
+	int array_size;
 	// function parameters
-	Param *parameters;
-	int n_pars;
+	param *parameters;
+	int num_of_pars;
 	// pointer to next item in the list
 	struct tokens *next;
 }tokens;
