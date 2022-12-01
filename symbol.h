@@ -28,18 +28,18 @@ typedef struct Param{
 }Param;
 
 /* a linked list of references (lineno's) for each variable */
-typedef struct RefList{ 
+typedef struct varref{ 
     int lineno;
-    struct RefList *next;
-}RefList;
+    struct varref *next;
+}varref;
 
 // struct that represents a list node
-typedef struct list_t{
+typedef struct tokens{
 	// name, size of name, scope and occurrences (lines)
 	char st_name[MAXTOKENLEN];
     int st_size;
     int scope;
-    RefList *lines;
+    varref *lines;
     
 	// to store value
 	Value val;
@@ -60,13 +60,13 @@ typedef struct list_t{
 	int num_of_pars;
 	
 	// pointer to next item in the list
-	struct list_t *next;
-}list_t;
+	struct tokens *next;
+}tokens;
 
 /* Queue of identifiers to revisit */
 typedef struct revisit_queue{
 	// symbol table entry
-	list_t *entry;
+	tokens *entry;
 	
 	// name of identifier
 	char *st_name;
@@ -93,7 +93,7 @@ typedef struct revisit_queue{
 #define ASSIGN_CHECK 2 /* Check assignment when function call part of the expression */
 
 /* static structures */
-static list_t **hash_table;
+static tokens **hash_table;
 static revisit_queue *queue;
 
 
@@ -101,7 +101,7 @@ static revisit_queue *queue;
 void init_hash_table(); // initialize hash table
 unsigned int hash(char *key); // hash function 
 void insert(char *name, int len, int type, int lineno); // insert entry
-list_t *lookup(char *name); // search for entry
+tokens *lookup(char *name); // search for entry
 void symtab_dump(FILE *of); // dump file
 
 // Type Functions
@@ -118,7 +118,7 @@ int func_declare(char *name, int ret_type, int num_of_pars, Param *parameters); 
 int func_param_check(char *name, int num_of_calls, int** par_types, int *num_of_pars); // check parameters
 
 // Revisit Queue Functions
-void add_to_queue(list_t *entry, char *name, int type); // add to queue
+void add_to_queue(tokens *entry, char *name, int type); // add to queue
 revisit_queue *search_queue(char *name); // search queue
 revisit_queue *search_prev_queue(char *name); // search previous of element
 int revisit(char *name); // revisit entry by also removing it from queue

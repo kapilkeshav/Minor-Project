@@ -18,7 +18,7 @@ void generate_data_declarations(FILE *fp){
 	for (i = 0; i < SIZE; i++){ 
 		/* if hashtable list not empty */
 		if (hash_table[i] != NULL){ 
-			list_t *l = hash_table[i];
+			tokens *l = hash_table[i];
 			/* loop through list */
 			while (l != NULL){ 
 				/* Simple Variables */

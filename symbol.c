@@ -17,7 +17,7 @@ int function_decl = 0; // 1: declaring function, 0: not
 
 void init_hash_table(){
 	int i; 
-	hash_table = malloc(SIZE * sizeof(list_t*));
+	hash_table = malloc(SIZE * sizeof(tokens*));
 	for(i = 0; i < SIZE; i++) hash_table[i] = NULL;
 }
 
@@ -30,7 +30,7 @@ unsigned int hash(char *key){
 
 void insert(char *name, int len, int type, int lineno){
 	unsigned int hashval = hash(name);
-	list_t *l = hash_table[hashval];
+	tokens *l = hash_table[hashval];
 	
 	while ((l != NULL) && (strcmp(name,l->st_name) != 0)) l = l->next;
 	
@@ -39,12 +39,12 @@ void insert(char *name, int len, int type, int lineno){
 		/* check if we are declaring */
 		if(declare == 1){
 			/* set up entry */
-			l = (list_t*) malloc(sizeof(list_t));
+			l = (tokens*) malloc(sizeof(tokens));
 			strncpy(l->st_name, name, len);
 			l->st_size = len;
 			l->st_type = type;
 			l->scope = cur_scope;
-			l->lines = (RefList*) malloc(sizeof(RefList));
+			l->lines = (varref*) malloc(sizeof(varref));
 			l->lines->lineno = lineno;
 			l->lines->next = NULL;
 			
@@ -55,12 +55,12 @@ void insert(char *name, int len, int type, int lineno){
 		}
 		else{
 			/* add it to check it again later */
-			l = (list_t*) malloc(sizeof(list_t));
+			l = (tokens*) malloc(sizeof(tokens));
 			strncpy(l->st_name, name, len);
 			l->st_size = len;
 			l->st_type = type;
 			l->scope = cur_scope;
-			l->lines = (RefList*) malloc(sizeof(RefList));
+			l->lines = (varref*) malloc(sizeof(varref));
 			l->lines->lineno = lineno;
 			l->lines->next = NULL;
 			l->next = hash_table[hashval];
@@ -76,11 +76,11 @@ void insert(char *name, int len, int type, int lineno){
 		// just add line number
 		if(declare == 0){
 			/* find last reference */
-			RefList *t = l->lines;
+			varref *t = l->lines;
 			while (t->next != NULL) t = t->next;
 			
 			/* add linenumber to reference list */
-			t->next = (RefList*) malloc(sizeof(RefList));
+			t->next = (varref*) malloc(sizeof(varref));
 			t->next->lineno = lineno;
 			t->next->next = NULL;
 			// printf("Found %s again at line %d!\n", name, lineno);
@@ -95,23 +95,23 @@ void insert(char *name, int len, int type, int lineno){
 			/* other scope - but function declaration */
 			else if(function_decl == 1){
 				/* find last reference */
-				RefList *t = l->lines;
+				varref *t = l->lines;
 				while (t->next != NULL) t = t->next;
 				
 				/* add linenumber to reference list */
-				t->next = (RefList*) malloc(sizeof(RefList));
+				t->next = (varref*) malloc(sizeof(varref));
 				t->next->lineno = lineno;
 				t->next->next = NULL;
 			}
 			/* other scope - create new entry */
 			else{
 				/* set up entry */
-				l = (list_t*) malloc(sizeof(list_t));
+				l = (tokens*) malloc(sizeof(tokens));
 				strncpy(l->st_name, name, len);
 				l->st_size = len;
 				l->st_type = type;
 				l->scope = cur_scope;
-				l->lines = (RefList*) malloc(sizeof(RefList));
+				l->lines = (varref*) malloc(sizeof(varref));
 				l->lines->lineno = lineno;
 				l->lines->next = NULL;
 				
@@ -124,9 +124,9 @@ void insert(char *name, int len, int type, int lineno){
 	}
 }
 
-list_t *lookup(char *name){ /* return symbol if found or NULL if not found */
+tokens *lookup(char *name){ /* return symbol if found or NULL if not found */
 	unsigned int hashval = hash(name);
-	list_t *l = hash_table[hashval];
+	tokens *l = hash_table[hashval];
 	while ((l != NULL) && (strcmp(name,l->st_name) != 0)) l = l->next;
 	return l;
 }
@@ -138,9 +138,9 @@ void symtab_dump(FILE * of){  /* dump file */
   fprintf(of,"------------ -------------- ------ ------------\n");
   for (i=0; i < SIZE; ++i){ 
 	if (hash_table[i] != NULL){ 
-		list_t *l = hash_table[i];
+		tokens *l = hash_table[i];
 		while (l != NULL){ 
-			RefList *t = l->lines;
+			varref *t = l->lines;
 			fprintf(of,"%-13s",l->st_name);
 			if (l->st_type == INT_TYPE)                fprintf(of,"%-15s","int");
 			else if (l->st_type == REAL_TYPE)          fprintf(of,"%-15s","real");
@@ -186,7 +186,7 @@ void symtab_dump(FILE * of){  /* dump file */
 
 void set_type(char *name, int st_type, int inf_type){ // set the type of an entry (declaration)
 	/* lookup entry */
-	list_t *l = lookup(name);
+	tokens *l = lookup(name);
 	
 	/* set as "main" type */
 	l->st_type = st_type;
@@ -199,7 +199,7 @@ void set_type(char *name, int st_type, int inf_type){ // set the type of an entr
 
 int get_type(char *name){ // get the type of an entry
 	/* lookup entry */
-	list_t *l = lookup(name);
+	tokens *l = lookup(name);
 	
 	/* if "simple" type */
 	if(l->st_type == INT_TYPE || l->st_type == REAL_TYPE || l->st_type == CHAR_TYPE){
@@ -214,7 +214,7 @@ int get_type(char *name){ // get the type of an entry
 // Scope Management Functions
 
 void hide_scope(){ /* hide the current scope */
-	list_t *l;
+	tokens *l;
 	int i;
 	// printf("Hiding scope \'%d\':\n", cur_scope);
 	/* for all the lists */
@@ -253,7 +253,7 @@ Param def_param(int par_type, char *param_name, int passing){ // define paramete
 
 int func_declare(char *name, int ret_type, int num_of_pars, Param *parameters){ // declare function
 	/* lookup entry */
-	list_t *l = lookup(name);
+	tokens *l = lookup(name);
 	
 	if(l != NULL){
 		/* if type is not defined yet */
@@ -282,7 +282,7 @@ int func_param_check(char *name, int num_of_calls, int** par_types, int *num_of_
 	int i, j, type_1, type_2;
 	
 	/* lookup entry */
-	list_t *l = lookup(name);
+	tokens *l = lookup(name);
 	
 	/* for all function calls */
 	for(i = 0 ; i < num_of_calls ; i++){
@@ -310,7 +310,7 @@ int func_param_check(char *name, int num_of_calls, int** par_types, int *num_of_
 
 // Revisit Queue Functions
 
-void add_to_queue(list_t *entry, char *name, int type){ /* add to queue */
+void add_to_queue(tokens *entry, char *name, int type){ /* add to queue */
 	revisit_queue *q;
 	
 	/* queue is empty */

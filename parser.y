@@ -14,8 +14,8 @@
 	void yyerror();
 	
 	// for declarations
-	void add_to_names(list_t *entry);
-	list_t **names;
+	void add_to_names(tokens *entry);
+	tokens **names;
 	int nc = 0;
 	
 	// for the initializations of arrays
@@ -38,7 +38,7 @@
 	Value val;   
 	
 	// structures
-	list_t* symtab_item;
+	tokens* symtab_item;
 	AST_Node* node;
 	
 	// for declarations
@@ -780,17 +780,17 @@ void yyerror ()
   exit(1);
 }
 
-void add_to_names(list_t *entry){
+void add_to_names(tokens *entry){
 	// first entry
 	if(nc == 0){
 		nc = 1;
-		names = (list_t **) malloc( 1 * sizeof(list_t *));
+		names = (tokens **) malloc( 1 * sizeof(tokens *));
 		names[0] = entry;
 	}
 	// general case
 	else{
 		nc++;
-		names = (list_t **) realloc(names, nc * sizeof(list_t *));
+		names = (tokens **) realloc(names, nc * sizeof(tokens *));
 		names[nc - 1] = entry;		
 	}
 }

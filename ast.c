@@ -49,7 +49,7 @@ AST_Node *new_declarations_node(AST_Node **declarations, int declaration_count, 
 	return (struct AST_Node *) v;
 }
 
-AST_Node *new_ast_decl_node(int data_type, list_t **names, int names_count){
+AST_Node *new_ast_decl_node(int data_type, tokens **names, int names_count){
 	// allocate memory
 	AST_Node_Decl *v = malloc (sizeof (AST_Node_Decl));
 	
@@ -183,7 +183,7 @@ AST_Node *new_ast_while_node(AST_Node *condition, AST_Node *while_branch){
 	return (struct AST_Node *) v;
 }
 
-AST_Node *new_ast_assign_node(list_t *entry, int ref, AST_Node *assign_val){
+AST_Node *new_ast_assign_node(tokens *entry, int ref, AST_Node *assign_val){
 	// allocate memory
 	AST_Node_Assign *v = malloc (sizeof (AST_Node_Assign));
 	
@@ -209,7 +209,7 @@ AST_Node *new_ast_simple_node(int statement_type){
 	return (struct AST_Node *) v;
 }
  
-AST_Node *new_ast_incr_node(list_t *entry, int incr_type, int pf_type){
+AST_Node *new_ast_incr_node(tokens *entry, int incr_type, int pf_type){
 	// allocate memory
 	AST_Node_Incr *v = malloc (sizeof (AST_Node_Incr));
 	
@@ -223,7 +223,7 @@ AST_Node *new_ast_incr_node(list_t *entry, int incr_type, int pf_type){
 	return (struct AST_Node *) v;
 }
 
-AST_Node *new_ast_func_call_node(list_t *entry, AST_Node **params, int num_of_pars){
+AST_Node *new_ast_func_call_node(tokens *entry, AST_Node **params, int num_of_pars){
 	// allocate memory
 	AST_Node_Func_Call *v = malloc (sizeof (AST_Node_Func_Call));
 	
@@ -360,7 +360,7 @@ AST_Node *new_ast_equ_node(enum Equ_op op, AST_Node *left, AST_Node *right){
 	return (struct AST_Node *) v;	
 }
 
-AST_Node *new_ast_ref_node(list_t *entry, int ref){
+AST_Node *new_ast_ref_node(tokens *entry, int ref){
 	// allocate memory
 	AST_Node_Ref *v = malloc (sizeof (AST_Node_Ref));
 	
@@ -511,7 +511,7 @@ AST_Node *new_func_declarations_node(AST_Node **func_declarations, int func_decl
 	return (struct AST_Node *) v;
 }
 
-AST_Node *new_ast_func_decl_node(int ret_type, int pointer, list_t *entry){
+AST_Node *new_ast_func_decl_node(int ret_type, int pointer, tokens *entry){
 	// allocate memory
 	AST_Node_Func_Decl *v = malloc (sizeof (AST_Node_Func_Decl));
 	

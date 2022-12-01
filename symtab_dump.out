@@ -1,0 +1,8 @@
+------------ -------------- ------ ------------
+Name         Type           Scope  Line Numbers
+------------ -------------- ------ ------------
+i            int              0     2    5    5    5    6    6    7    8 
+val          real             0     3    6    7 
+res          array of 10 real    0     3    6    7    8 
+operation    func ret real    0     6   13 
+print        func ret void    0     8    9 

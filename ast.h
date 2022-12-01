@@ -85,7 +85,7 @@ typedef struct AST_Node_Decl{
 	int data_type;
 	
 	// symbol table entries of the variables
-	list_t **names;
+	tokens **names;
 	int names_count;
 }AST_Node_Decl;
 
@@ -151,7 +151,7 @@ typedef struct AST_Node_For{
 	struct AST_Node *for_branch;
 	
 	// loop counter
-	list_t *counter;
+	tokens *counter;
 }AST_Node_For;
 
 typedef struct AST_Node_While{
@@ -168,7 +168,7 @@ typedef struct AST_Node_Assign{
 	enum Node_Type type; // node type
 	
 	// symbol table entry
-	list_t *entry;
+	tokens *entry;
 	
 	// reference or not
 	int ref; // 0: not reference, 1: reference
@@ -188,7 +188,7 @@ typedef struct AST_Node_Incr{
 	enum Node_Type type; // node type
 	
 	// identifier
-	list_t *entry;
+	tokens *entry;
 	
 	// increment or decrement
 	int incr_type; // 0: increment, 1: decrement
@@ -201,7 +201,7 @@ typedef struct AST_Node_Func_Call{
 	enum Node_Type type; // node type
 	
 	// function identifier
-	list_t *entry;
+	tokens *entry;
 	
 	// call parameters
 	AST_Node **params;
@@ -273,7 +273,7 @@ typedef struct AST_Node_Ref{
 	enum Node_Type type; // node type
 	
 	// symbol table entry
-	list_t *entry;
+	tokens *entry;
 	
 	// reference or not
 	int ref; // 0: not reference, 1: reference
@@ -298,7 +298,7 @@ typedef struct AST_Node_Func_Decl{
 	int pointer; // 0: not pointer, 1: pointer
 	
 	// symbol table entry
-	list_t *entry;
+	tokens *entry;
 	
 	// declarations, statements and return
 	struct AST_Node *declarations;
@@ -341,7 +341,7 @@ AST_Node *new_ast_node(Node_Type type, AST_Node *left, AST_Node *right); 	 // si
 
 /* Declarations */
 AST_Node *new_declarations_node(AST_Node **declarations, int declaration_count, AST_Node *declaration);
-AST_Node *new_ast_decl_node(int data_type, list_t **names, int names_count); // declaration
+AST_Node *new_ast_decl_node(int data_type, tokens **names, int names_count); // declaration
 AST_Node *new_ast_const_node(int const_type, Value val);					 // constant
 
 /* Statements */
@@ -352,10 +352,10 @@ AST_Node *new_ast_elsif_node(AST_Node *condition, AST_Node *elsif_branch);
 AST_Node *new_ast_for_node(AST_Node *initialize, AST_Node *condition, AST_Node *increment, AST_Node *for_branch);
 void set_loop_counter(AST_Node *node);
 AST_Node *new_ast_while_node(AST_Node *condition, AST_Node *while_branch);
-AST_Node *new_ast_assign_node(list_t *entry, int ref, AST_Node *assign_val);
-AST_Node *new_ast_simple_node(int statement_type);							 // continue or break
-AST_Node *new_ast_incr_node(list_t *entry, int incr_type, int pf_type);      // increment decrement
-AST_Node *new_ast_func_call_node(list_t *entry, AST_Node **params, int num_of_pars); // function call
+AST_Node *new_ast_assign_node(tokens *entry, int ref, AST_Node *assign_val);
+AST_Node *new_ast_simple_node(int statement_type);							 
+AST_Node *new_ast_incr_node(tokens *entry, int incr_type, int pf_type);      // increment decrement
+AST_Node *new_ast_func_call_node(tokens *entry, AST_Node **params, int num_of_pars); // function call
 AST_Node *new_ast_call_params_node(AST_Node **params, int num_of_pars, AST_Node *param);
 
 /* Expressions */
@@ -363,12 +363,12 @@ AST_Node *new_ast_arithm_node(enum Arithm_op op, AST_Node *left, AST_Node *right
 AST_Node *new_ast_bool_node(enum Bool_op op, AST_Node *left, AST_Node *right);
 AST_Node *new_ast_rel_node(enum Rel_op op, AST_Node *left, AST_Node *right);
 AST_Node *new_ast_equ_node(enum Equ_op op, AST_Node *left, AST_Node *right);
-AST_Node *new_ast_ref_node(list_t *entry, int ref);
+AST_Node *new_ast_ref_node(tokens *entry, int ref);
 int expression_data_type(AST_Node *node);                                    // returns the data type of an expression
 
 /* Functions */
 AST_Node *new_func_declarations_node(AST_Node **func_declarations, int func_declaration_count, AST_Node *func_declaration);
-AST_Node *new_ast_func_decl_node(int ret_type, int pointer, list_t *entry);
+AST_Node *new_ast_func_decl_node(int ret_type, int pointer, tokens *entry);
 AST_Node *new_ast_ret_type_node(int ret_type, int pointer);                  // function return type
 AST_Node *new_ast_decl_params_node(Param *parameters, int num_of_pars, Param param);
 AST_Node *new_ast_return_node(int ret_type, AST_Node *ret_val);				 // function return
